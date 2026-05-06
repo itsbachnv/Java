@@ -21,9 +21,9 @@ public class FoodAppApplication {
             n.setTitle("Chào mừng!");
             n.setMessage("Đơn hàng của bạn đã được xác nhận");
             n.setRead(false);
-            notificationRepository.save(n);
+            //notificationRepository.save(n);
 
-            System.out.println("✅ MongoDB insert thành công!");
+            //System.out.println("✅ MongoDB insert thành công!");
         };
     }
 }

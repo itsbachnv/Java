@@ -15,7 +15,9 @@ public class AuditorAwareImpl implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         return Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getName);
+                .filter(auth -> auth != null && auth.isAuthenticated()
+                        && !"anonymousUser".equals(auth.getPrincipal()))
+                .map(Authentication::getName)
+                .or(() -> Optional.of("SYSTEM"));
     }
 }

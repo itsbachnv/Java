@@ -3,9 +3,13 @@ package com.foodapp.foodapp.UserService.entity;
 import com.foodapp.foodapp.common.BaseEntity;
 import com.foodapp.foodapp.common.Embeddable.UserStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity @Table(name = "users")
 public class User extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
