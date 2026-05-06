@@ -22,4 +22,8 @@ public class UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmailCustom(email);
     }
+
+    public void register(String email, String password, String rePass) {
+
+    }
 }
