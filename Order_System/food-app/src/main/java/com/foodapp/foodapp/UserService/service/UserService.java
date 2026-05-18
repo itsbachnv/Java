@@ -2,6 +2,7 @@ package com.foodapp.foodapp.UserService.service;
 
 import com.foodapp.foodapp.UserService.entity.User;
 import com.foodapp.foodapp.UserService.repository.IUserRepository;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class UserService {
     }
 
     public void register(String email, String password, String rePass) {
-
+        User u = new User();
+        u.setEmail(email);
+        String passhash = BCrypt.hashpw(password);
+        u.setPasswordHash();
     }
 }

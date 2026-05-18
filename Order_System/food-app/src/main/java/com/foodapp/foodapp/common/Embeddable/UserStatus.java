@@ -1,4 +1,4 @@
 package com.foodapp.foodapp.common.Embeddable;
 
-public enum UserStatus { ACTIVE, INACTIVE, BANNED }
+public enum UserStatus { ACTIVE, INACTIVE, BANNED, PENDING }
 
