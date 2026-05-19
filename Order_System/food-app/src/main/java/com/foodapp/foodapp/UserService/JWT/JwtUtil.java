@@ -1,4 +1,4 @@
-package com.foodapp.foodapp.common.JWT;
+package com.foodapp.foodapp.UserService.JWT;
 
 import com.foodapp.foodapp.UserService.entity.User;
 import io.jsonwebtoken.Claims;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -28,9 +27,9 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateToken(Optional<User> userDetails) {
+    public String generateToken(User userDetails) {
         return Jwts.builder()
-                .setSubject(userDetails.get().getEmail())
+                .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

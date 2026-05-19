@@ -1,7 +1,10 @@
 package com.foodapp.foodapp.UserService.service;
 
+import com.foodapp.foodapp.NotificationService.service.NotificationService;
 import com.foodapp.foodapp.UserService.entity.OtpToken;
-import com.foodapp.foodapp.UserService.exception.AppExceptions.*;
+import com.foodapp.foodapp.UserService.exception.AppExceptions;
+import com.foodapp.foodapp.UserService.exception.AppExceptions.InvalidOtpException;
+import com.foodapp.foodapp.UserService.exception.AppExceptions.OtpCooldownException;
 import com.foodapp.foodapp.UserService.repository.OtpTokenRepository;
 import com.foodapp.foodapp.common.Embeddable.OtpPurpose;
 import lombok.RequiredArgsConstructor;
@@ -43,19 +46,19 @@ public class OtpService {
         // 1. Rate limit IP
         if (ip != null) {
             long ipCount = otpRepo.countByIpAddressAndCreatedAtAfter(ip, LocalDateTime.now().minusHours(1));
-            if (ipCount >= rateLimitPerIp) throw new RateLimitException();
+            if (ipCount >= rateLimitPerIp) throw new AppExceptions.RateLimitException();
         }
 
         // 2. Kiểm tra giới hạn resend trong ngày
         int resendToday = otpRepo.sumResendSince(identifier, purpose, LocalDate.now().atStartOfDay());
-        if (resendToday >= maxResendPerDay) throw new OtpResendLimitException();
+        if (resendToday >= maxResendPerDay) throw new AppExceptions.OtpResendLimitException();
 
         // 3. OTP còn hạn → resend nếu qua cooldown, hoặc báo chờ
         otpRepo.findTopByIdentifierAndPurposeAndUsedFalseOrderByCreatedAtDesc(identifier, purpose)
                 .ifPresent(existing -> {
                     if (!existing.isExpired()) {
                         if (!existing.canResend()) {
-                            throw new OtpCooldownException(existing.secondsUntilCanResend());
+                            throw new AppExceptions.OtpCooldownException(existing.secondsUntilCanResend());
                         }
                         // Qua cooldown → increment resend rồi gửi lại token cũ
                         existing.setResendCount(existing.getResendCount() + 1);
@@ -100,12 +103,12 @@ public class OtpService {
     public void verify(String identifier, String input, OtpPurpose purpose) {
         OtpToken otp = otpRepo
                 .findTopByIdentifierAndPurposeAndUsedFalseOrderByCreatedAtDesc(identifier, purpose)
-                .orElseThrow(OtpExpiredException::new);
+                .orElseThrow(AppExceptions.OtpExpiredException::new);
 
         if (otp.isExpired()) {
             otp.setUsed(true);
             otpRepo.save(otp);
-            throw new OtpExpiredException();
+            throw new AppExceptions.OtpExpiredException();
         }
 
         if (otp.isMaxAttempts()) {

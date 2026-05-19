@@ -1,7 +1,6 @@
-package com.foodapp.foodapp.common.JWT;
+package com.foodapp.foodapp.UserService.JWT;
 
-import com.foodapp.foodapp.UserService.entity.User;
-import com.foodapp.foodapp.UserService.service.UserService;
+import com.foodapp.foodapp.UserService.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,20 +34,12 @@ public class JwtFilter extends OncePerRequestFilter {
             String username = jwtUtil.extractUsername(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                User user = userDetailsService.findByEmail(username)
-                        .orElseThrow(() -> new ServletException("User not found"));
+                UserDetails user = userDetailsService.loadUserByUsername(username);
 
-                UserDetails userDetails = org.springframework.security.core.userdetails.User
-                        .builder()
-                        .username(user.getEmail())
-                        .password(user.getPasswordHash())
-                        .roles("USER")
-                        .build();
-
-                if (jwtUtil.validateToken(token, userDetails)) {
+                if (jwtUtil.validateToken(token, user)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
+                                    user, null, user.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }

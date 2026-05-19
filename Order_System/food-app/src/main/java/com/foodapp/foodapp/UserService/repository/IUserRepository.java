@@ -7,13 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, String> {
     List<User> findByEmail(String email); //auto
 
     @Query("Select u from User u where u.email like concat('%',:email, '%')")
-    Optional<User> findByEmailCustom(@Param("email") String email);
+    User findByEmailCustom(@Param("email") String email);
 
 }

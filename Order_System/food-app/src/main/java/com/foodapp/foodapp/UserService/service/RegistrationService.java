@@ -1,8 +1,11 @@
 package com.foodapp.foodapp.UserService.service;
 
+import com.foodapp.foodapp.NotificationService.service.NotificationService;
 import com.foodapp.foodapp.UserService.dto.RegistrationDto.*;
 import com.foodapp.foodapp.UserService.entity.User;
-import com.foodapp.foodapp.UserService.exception.AppExceptions.*;
+import com.foodapp.foodapp.UserService.exception.AppExceptions.DuplicateException;
+import com.foodapp.foodapp.UserService.exception.AppExceptions.PasswordMismatchException;
+import com.foodapp.foodapp.UserService.exception.AppExceptions.UserNotFoundException;
 import com.foodapp.foodapp.UserService.repository.UserRepository;
 import com.foodapp.foodapp.common.Embeddable.OtpPurpose;
 import com.foodapp.foodapp.common.Embeddable.UserStatus;
