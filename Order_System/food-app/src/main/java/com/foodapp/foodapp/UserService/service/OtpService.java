@@ -25,7 +25,7 @@ public class OtpService {
     private final OtpTokenRepository otpRepo;
     private final NotificationService notificationService;
 
-    @Value("${app.otp.expiry-seconds:120}")
+    @Value("${app.otp.expiry-seconds:900}")
     private long expirySeconds;
 
     @Value("${app.otp.max-attempts:5}")
@@ -130,7 +130,7 @@ public class OtpService {
 
     private void send(String identifier, String token, OtpPurpose purpose) {
         boolean isPhone = identifier.matches("^0[0-9]{9}$");
-        String msg = "Mã OTP của bạn là: " + token + ". Có hiệu lực trong 2 phút.";
+        String msg = "Mã OTP của bạn là: " + token + ". Có hiệu lực trong 15 phút.";
         if (isPhone) notificationService.sendSms(identifier, msg);
         else         notificationService.sendEmail(identifier, "Mã xác thực", msg);
     }
